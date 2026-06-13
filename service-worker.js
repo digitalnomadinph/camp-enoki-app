@@ -1,7 +1,6 @@
-// Minimal service worker: required for the "Install app" prompt, and caches the
-// app shell so it opens instantly. The booking app itself (Google) always loads
-// live from the network.
-var CACHE = 'campenoki-shell-v1';
+// Service worker: enables "Install app" and caches the launcher shell.
+// Bumped to v2 (launcher now opens the portal at top level instead of a frame).
+var CACHE = 'campenoki-shell-v2';
 var SHELL = ['.', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', function (e) {
@@ -20,8 +19,11 @@ self.addEventListener('activate', function (e) {
 
 self.addEventListener('fetch', function (e) {
   var url = e.request.url;
-  // Let the live booking app (Google) always hit the network.
   if (url.indexOf('script.google') >= 0 || url.indexOf('googleusercontent') >= 0) return;
-  // Shell files: serve from cache first, fall back to network.
+  // Network-first for page loads so updates appear immediately; cache offline.
+  if (e.request.mode === 'navigate') {
+    e.respondWith(fetch(e.request).catch(function () { return caches.match('index.html'); }));
+    return;
+  }
   e.respondWith(caches.match(e.request).then(function (r) { return r || fetch(e.request); }));
 });
