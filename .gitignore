@@ -1,0 +1,3 @@
+# Local-only source/build files (not needed on the published site)
+logo.jpg
+make-icons.js
