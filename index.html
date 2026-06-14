@@ -16,23 +16,23 @@
   <style>
     html, body { margin: 0; height: 100%; background: #2f5d3a; color: #fff; font-family: 'Segoe UI', system-ui, sans-serif; }
     .wrap { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; gap: 12px; }
-    .logo { width: 116px; height: 116px; border-radius: 26px; box-shadow: 0 6px 20px rgba(0,0,0,.28); }
+    .logo { width: 132px; height: 132px; border-radius: 26px; box-shadow: 0 6px 20px rgba(0,0,0,.3); }
     h1 { margin: 8px 0 0; font-size: 26px; }
-    p { margin: 0; opacity: .85; font-size: 14px; }
-    .btn { margin-top: 10px; background: #fff; color: #2f5d3a; font-weight: 700; font-size: 16px; text-decoration: none; padding: 14px 28px; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,.2); }
-    .hint { font-size: 12px; opacity: .7; margin-top: 6px; }
+    .sub { margin: 0; opacity: .85; font-size: 14px; }
+    .btn { margin-top: 12px; background: #fff; color: #2f5d3a; font-weight: 700; font-size: 16px; text-decoration: none; padding: 14px 28px; border-radius: 12px; box-shadow: 0 4px 14px rgba(0,0,0,.22); }
+    .hint { font-size: 12.5px; opacity: .82; margin-top: 8px; max-width: 320px; line-height: 1.5; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <img class="logo" src="icon-512.png" alt="Camp Enoki" />
     <h1>Camp Enoki</h1>
-    <p>Booking Portal</p>
+    <p class="sub">Booking Portal</p>
     <a id="go" class="btn"
        href="https://script.google.com/macros/s/AKfycbz_TVOkKClvIgoLmRScufHqAuKs2CXU2XI9yVj_puwy3VtQNup3_qsQl6-J6PYV0FnqDg/exec">
        Open Booking Portal
     </a>
-    <p class="hint">Opening your booking portal...</p>
+    <p id="hint" class="hint"></p>
   </div>
 
   <script>
@@ -41,10 +41,17 @@
         navigator.serviceWorker.register('service-worker.js').catch(function () {});
       });
     }
-    // Open the portal at the TOP level. Chrome blocks Google Apps Script inside an
-    // embedded frame (third-party), but opening it directly works everywhere.
     var url = document.getElementById('go').href;
-    setTimeout(function () { window.location.href = url; }, 1100);
+    var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (standalone) {
+      // Launched from the installed home-screen app: go straight to the portal.
+      document.getElementById('hint').textContent = 'Opening your booking portal...';
+      setTimeout(function () { window.location.href = url; }, 600);
+    } else {
+      // Normal browser tab: STAY here (this page is installable) so Chrome can
+      // offer "Install app". Tapping the button opens the portal.
+      document.getElementById('hint').innerHTML = 'Tap <b>Open Booking Portal</b> to book &middot; or browser menu (&#8942;) &rarr; <b>Install app</b> to add it to your home screen.';
+    }
   </script>
 </body>
 </html>

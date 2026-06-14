@@ -1,6 +1,6 @@
 // Service worker: enables "Install app" and caches the launcher shell.
 // Bumped to v2 (launcher now opens the portal at top level instead of a frame).
-var CACHE = 'campenoki-shell-v2';
+var CACHE = 'campenoki-shell-v3';
 var SHELL = ['.', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', function (e) {
